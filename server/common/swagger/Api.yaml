@@ -1,0 +1,79 @@
+swagger: "2.0"
+info:
+  version: 1.0.0
+  title: mbr-test
+  description: MBR test task
+basePath: /api/v1
+tags:
+  - name: Configs
+    description: This endpoint is used to configure the service
+  - name: Bids
+    description: This endpoint is used to request bids.
+
+consumes:
+  - application/json
+produces:
+  - application/json
+
+definitions:
+  RuleBody:
+    type: object
+    title: rule
+    required:
+      - key
+      - value
+      - behavior
+    properties:
+      key:
+        type: string
+        example: a
+      value:
+        type: string
+        example: a1
+      behavior:
+        type: string
+        example: match
+        enum:
+          - match
+          - boost
+  ConfigBody:
+    type: object
+    title: config
+    required:
+      - id
+      - rules
+    properties:
+      id:
+        type: string
+        example: campaign1
+      rules:
+        type: array
+        items:
+          $ref: "#/definitions/RuleBody"
+
+paths:
+  /config:
+    post:
+      tags:
+        - Configs
+      description: Create a new configs
+      parameters:
+        - in: body
+          name: body
+          description: List of config object
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/ConfigBody"
+      responses:
+        200:
+          description: Returns all configs
+  /bid:
+    get:
+      tags:
+        - Bids
+      description: This endpoint is used to request bids.
+      responses:
+        200:
+          description: For every campaign that had all rules match, calculate the number of boost rules that matched.
